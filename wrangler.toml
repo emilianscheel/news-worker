@@ -1,0 +1,39 @@
+name = "news-worker"
+main = "src/index.ts"
+compatibility_date = "2023-12-30"
+account_id = "0a62c375fe0b59de782909af439ac386"
+node_compat = true
+
+[triggers]
+crons = [ "0 * * * *" ]
+
+[[r2_buckets]]
+binding = 'TAGESSCHAU_BUCKET' # <~ valid JavaScript variable name
+bucket_name = 'tagesschau-data' # <~ valid S3 bucket name
+jurisdiction = 'eu' # <~ valid jurisdiction
+
+[[r2_buckets]]
+binding = 'SPIEGEL_BUCKET' # <~ valid JavaScript variable name
+bucket_name = 'spiegel-data' # <~ valid S3 bucket name
+jurisdiction = 'eu' # <~ valid jurisdiction
+
+[[r2_buckets]]
+binding = 'ZEIT_BUCKET' # <~ valid JavaScript variable name
+bucket_name = 'zeit-data' # <~ valid S3 bucket name
+jurisdiction = 'eu' # <~ valid jurisdiction
+
+
+[[r2_buckets]]
+binding = 'BILD_BUCKET' # <~ valid JavaScript variable name
+bucket_name = 'bild-data' # <~ valid S3 bucket name
+jurisdiction = 'eu' # <~ valid jurisdiction
+
+[[r2_buckets]]
+binding = 'RBB24_BUCKET' # <~ valid JavaScript variable name
+bucket_name = 'rbb24-data' # <~ valid S3 bucket name
+jurisdiction = 'eu' # <~ valid jurisdiction
+
+[[r2_buckets]]
+binding = 'SZ_BUCKET' # <~ valid JavaScript variable name
+bucket_name = 'sz-data' # <~ valid S3 bucket name
+jurisdiction = 'eu' # <~ valid jurisdiction
