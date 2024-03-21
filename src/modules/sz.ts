@@ -3,7 +3,7 @@ import { fetchRSS } from "./rss"
 
 
 
-export const fetchSZ = async (env: Env) => {
+export const fetchSZ = async (env: Env, count: number) => {
 
-    await fetchRSS(env.SZ_BUCKET, "https://rss.sueddeutsche.de/alles", "channel", "item")
+    return await fetchRSS(env.SZ_BUCKET, "https://rss.sueddeutsche.de/alles", "channel", "item", count)
 }

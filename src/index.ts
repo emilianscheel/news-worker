@@ -35,11 +35,26 @@ export interface Env {
     SZ_BUCKET: R2Bucket;
 }
 
+async function fetch(env: Env) {
+    let count = 0
+    count = await fetchTagesschau(env, count)
+    count = await fetchSpiegel(env, count)
+    count = await fetchZeit(env, count)
+    count = await fetchSZ(env, count)
+    count = await fetchBild(env, count)
+    count = await fetchRBB24(env, count)
+}
+
 export default {
     async fetch(
         request: Request,
         env: Env,
     ): Promise<Response> {
+
+        if (request.url.includes("/trigger")) {
+            await fetch(env)
+            return new Response("Triggered")
+        }
 
         const tagesschau = await env.TAGESSCHAU_BUCKET.list()
         const spiegel = await env.SPIEGEL_BUCKET.list()
@@ -59,28 +74,28 @@ export default {
 
           <ul>
             <li>
-                <h3>${tagesschau.objects.length} Tagesschau Artikel (${tagesschau.objects.reduce((prev, item) => prev + item.size, 0)} Mb)</h3>
+                <h3>${tagesschau.objects.length} Tagesschau Artikel (${tagesschau.objects.reduce((prev, item) => prev + item.size, 0) / 1000} Mb)</h3>
             </li>
             <li>
-                <h3>${spiegel.objects.length} Spiegel Artikel (${spiegel.objects.reduce((prev, item) => prev + item.size, 0)} Mb)</h3>
+                <h3>${spiegel.objects.length} Spiegel Artikel (${spiegel.objects.reduce((prev, item) => prev + item.size, 0) / 1000} Mb)</h3>
             </li>
             <li>
-                <h3>${zeit.objects.length} Zeit Online Artikel (${zeit.objects.reduce((prev, item) => prev + item.size, 0)} Mb)</h3>
+                <h3>${zeit.objects.length} Zeit Online Artikel (${zeit.objects.reduce((prev, item) => prev + item.size, 0) / 1000} Mb)</h3>
             </li>
             <li>
-                <h3>${sz.objects.length} Süddeutsche Zeitung Artikel (${sz.objects.reduce((prev, item) => prev + item.size, 0)} Mb)</h3>
+                <h3>${sz.objects.length} Süddeutsche Zeitung Artikel (${sz.objects.reduce((prev, item) => prev + item.size, 0) / 1000} Mb)</h3>
             </li>
             <li>
-                <h3>${bild.objects.length} Bild Artikel (${bild.objects.reduce((prev, item) => prev + item.size, 0)} Mb)</h3>
+                <h3>${bild.objects.length} Bild Artikel (${bild.objects.reduce((prev, item) => prev + item.size, 0) / 1000} Mb)</h3>
             </li>
             <li>
-                <h3>${rbb24.objects.length} RBB24 Artikel (${rbb24.objects.reduce((prev, item) => prev + item.size, 0)} Mb)</h3>
+                <h3>${rbb24.objects.length} RBB24 Artikel (${rbb24.objects.reduce((prev, item) => prev + item.size, 0) / 1000} Mb)</h3>
             </li>
           </ul>
 
           <hr/>
 
-          <h3>Insgesamt ${objects.length} Artikel (${objects.reduce((prev, item) => prev + item.size, 0)} Mb)</h3>
+          <h3>Insgesamt ${objects.length} Artikel (${objects.reduce((prev, item) => prev + item.size, 0) / 1000} Mb)</h3>
 
 		</body>`;
 
@@ -88,7 +103,7 @@ export default {
             headers: {
                 "content-type": "text/html;charset=UTF-8",
             },
-        });
+        })
     },
 
     async scheduled(
@@ -97,12 +112,13 @@ export default {
         ctx: ExecutionContext
     ): Promise<void> {
 
+        let count = 0
 
-        await fetchTagesschau(env)
-        await fetchSpiegel(env)
-        await fetchZeit(env)
-        await fetchSZ(env)
-        await fetchBild(env)
-        await fetchRBB24(env)
+        count = await fetchTagesschau(env, count)
+        count = await fetchSpiegel(env, count)
+        count = await fetchZeit(env, count)
+        count = await fetchSZ(env, count)
+        count = await fetchBild(env, count)
+        count = await fetchRBB24(env, count)
     }
 };

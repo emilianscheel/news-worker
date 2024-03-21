@@ -3,7 +3,7 @@ import { fetchRSS } from "./rss"
 
 
 
-export const fetchSpiegel = async (env: Env) => {
+export const fetchSpiegel = async (env: Env, count: number) => {
 
-    await fetchRSS(env.SPIEGEL_BUCKET, "https://www.spiegel.de/schlagzeilen/index.rss", "channel", "item")
+    return await fetchRSS(env.SPIEGEL_BUCKET, "https://www.spiegel.de/schlagzeilen/index.rss", "channel", "item", count)
 }
