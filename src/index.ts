@@ -33,16 +33,19 @@ export interface Env {
     BILD_BUCKET: R2Bucket;
     RBB24_BUCKET: R2Bucket;
     SZ_BUCKET: R2Bucket;
+
+    enabled: string[]
 }
 
 async function fetch(env: Env) {
     let count = 0
-    count = await fetchTagesschau(env, count)
-    count = await fetchSpiegel(env, count)
-    count = await fetchZeit(env, count)
-    count = await fetchSZ(env, count)
-    count = await fetchBild(env, count)
-    count = await fetchRBB24(env, count)
+    if (env.enabled.includes("tagesschau")) count = await fetchTagesschau(env, count)
+    if (env.enabled.includes("spiegel")) count = await fetchSpiegel(env, count)
+    if (env.enabled.includes("zeit")) count = await fetchZeit(env, count)
+    if (env.enabled.includes("sz")) count = await fetchSZ(env, count)
+    if (env.enabled.includes("bild")) count = await fetchBild(env, count)
+    if (env.enabled.includes("rbb24")) count = await fetchRBB24(env, count)
+    return count
 }
 
 export default {
@@ -52,8 +55,8 @@ export default {
     ): Promise<Response> {
 
         if (request.url.includes("/trigger")) {
-            await fetch(env)
-            return new Response("Triggered")
+            const count = await fetch(env)
+            return new Response("Triggered " + count)
         }
 
         const tagesschau = await env.TAGESSCHAU_BUCKET.list()
@@ -97,6 +100,8 @@ export default {
 
           <h3>Insgesamt ${objects.length} Artikel (${objects.reduce((prev, item) => prev + item.size, 0) / 1000} Mb)</h3>
 
+          <a href="/trigger">Trigger manually</a>
+
 		</body>`;
 
         return new Response(html, {
@@ -114,11 +119,11 @@ export default {
 
         let count = 0
 
-        count = await fetchTagesschau(env, count)
-        count = await fetchSpiegel(env, count)
-        count = await fetchZeit(env, count)
-        count = await fetchSZ(env, count)
-        count = await fetchBild(env, count)
-        count = await fetchRBB24(env, count)
+        if (env.enabled.includes("tagesschau")) count = await fetchTagesschau(env, count)
+        if (env.enabled.includes("spiegel")) count = await fetchSpiegel(env, count)
+        if (env.enabled.includes("zeit")) count = await fetchZeit(env, count)
+        if (env.enabled.includes("sz")) count = await fetchSZ(env, count)
+        if (env.enabled.includes("bild")) count = await fetchBild(env, count)
+        if (env.enabled.includes("rbb24")) count = await fetchRBB24(env, count)
     }
 };
